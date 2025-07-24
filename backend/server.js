@@ -11,12 +11,9 @@ app.use(express.json());
 const citySchema = new mongoose.Schema({ name: { type: String, unique: true } });
 const City = mongoose.model('City', citySchema);
 
-// Connect to MongoDB using IPv4 localhost to avoid ECONNREFUSED on some setups
 mongoose.connect('mongodb://127.0.0.1:27017/travel')
   .then(() => {
     console.log('✅ MongoDB connected');
-
-    // Start server after successful DB connection
     app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT} ✅`);
 
@@ -25,8 +22,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/travel')
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err);
   });
-
-// Admin login endpoint
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
   if (username === 'admin' && password === 'admin') {
@@ -35,7 +30,7 @@ app.post('/api/admin/login', (req, res) => {
   return res.status(401).json({ success: false, message: 'Invalid credentials' });
 });
 
-// Add city endpoint
+
 app.post('/api/cities', async (req, res) => {
   const { city } = req.body;
   if (!city || !city.trim()) {
@@ -52,7 +47,6 @@ app.post('/api/cities', async (req, res) => {
   }
 });
 
-// Get all cities endpoint
 app.get('/api/cities', async (req, res) => {
   try {
     const cities = await City.find().sort({ name: 1 });
